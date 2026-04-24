@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  auth_db:
+    image: postgres:15
+    container_name: my_db1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: authdb
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  auth_service:
+    build: ./Auth-service
+    container_name: my_fastapiapp
+    ports:
+      - "8001:8001"
+    depends_on:
+      auth_db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@my_db1:5432/authdb
