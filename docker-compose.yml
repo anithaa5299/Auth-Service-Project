@@ -4,10 +4,8 @@ services:
   auth_db:
     image: postgres:15
     container_name: my_db1
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: authdb
+    env_file:
+      - .env
     ports:
       - "5433:5432"
     healthcheck:
@@ -24,5 +22,5 @@ services:
     depends_on:
       auth_db:
         condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@my_db1:5432/authdb
+    env_file:
+      - .env
